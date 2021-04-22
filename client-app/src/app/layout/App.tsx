@@ -1,28 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import axios from 'axios';
-import { Header, List } from 'semantic-ui-react';
+import { Container, Header, List } from 'semantic-ui-react';
+import { Activity } from '../models/activity';
+import Navbar from './NavBar';
+import ActivityDashboard from '../../features/activities/dashboard/ActivityDashboard';
 
 function App() {
-  const [ activities, setActivities ] = useState([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [selectedActivity, setSelectedActivity] = useState<Activity | undefined>(undefined);
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/activities`)
-         .then(response => {
-           setActivities(response.data);
-         })
+    axios.get<Activity[]>(`http://localhost:5000/api/activities`)
+      .then(response => {
+        setActivities(response.data);
+      })
   }, [])
 
+  const handleSelectActivity = (id: string) => {
+    setSelectedActivity(activities.find(activity => activity.id === id))
+  }
+
+  const handleCancelSelectActivity = () => {
+    setSelectedActivity(undefined);
+  }
+
   return (
-    <div>
-      <Header as='h2' icon='users' content='Reactivities' />
-        <List>
-          {activities.map((activity: any) => (
-            <List.Item key={activity.id}>
-              {activity.title}
-            </List.Item>
-          ))}
-        </List>
-    </div>
+    <>
+      <Navbar />
+      <Container style={{ marginTop: '7em' }}>
+        <ActivityDashboard 
+          activities={activities}
+          selectedActivity={selectedActivity}
+          selectActivity={handleSelectActivity}
+          cancelSelectActivity={handleCancelSelectActivity}
+
+        />
+      </Container>
+    </>
   );
 }
 
