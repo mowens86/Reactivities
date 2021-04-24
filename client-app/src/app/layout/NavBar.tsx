@@ -5,7 +5,7 @@ interface Props {
     openForm: () => void;
 }
 
-export default function Navbar({openForm}: Props) {
+export default function Navbar({ openForm }: Props) {
 
     return (
         <Menu inverted fixed='top'>
